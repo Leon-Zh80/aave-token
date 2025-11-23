@@ -10,40 +10,76 @@ import {
   TypedFunctionDescription
 } from ".";
 
+/**
+ * Defines the interface (ABI) structure for the ERC-20 standard functions and events.
+ */
 interface Erc20Interface extends Interface {
   functions: {
+    /**
+     * Returns the remaining number of tokens that 'spender' will be allowed to spend on behalf of 'owner'.
+     */
     allowance: TypedFunctionDescription<{
       encode([owner, spender]: [string, string]): string;
     }>;
 
+    /**
+     * Sets 'amount' as the allowance of 'spender' over the caller's tokens.
+     */
     approve: TypedFunctionDescription<{
       encode([spender, amount]: [string, BigNumberish]): string;
     }>;
 
+    /**
+     * Returns the amount of tokens owned by 'account'.
+     */
     balanceOf: TypedFunctionDescription<{
       encode([account]: [string]): string;
     }>;
 
+    /**
+     * Returns the number of decimals used to get its user representation.
+     */
     decimals: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    /**
+     * Atomically decreases the allowance granted to 'spender' by the caller.
+     */
     decreaseAllowance: TypedFunctionDescription<{
       encode([spender, subtractedValue]: [string, BigNumberish]): string;
     }>;
 
+    /**
+     * Atomically increases the allowance granted to 'spender' by the caller.
+     */
     increaseAllowance: TypedFunctionDescription<{
       encode([spender, addedValue]: [string, BigNumberish]): string;
     }>;
 
+    /**
+     * Returns the name of the token.
+     */
     name: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    /**
+     * Returns the symbol of the token.
+     */
     symbol: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    /**
+     * Returns the total token supply.
+     */
     totalSupply: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    /**
+     * Moves 'amount' tokens from the caller's account to 'recipient'.
+     */
     transfer: TypedFunctionDescription<{
       encode([recipient, amount]: [string, BigNumberish]): string;
     }>;
 
+    /**
+     * Moves 'amount' tokens from 'sender' to 'recipient' using the allowance mechanism.
+     */
     transferFrom: TypedFunctionDescription<{
       encode([sender, recipient, amount]: [
         string,
@@ -54,6 +90,9 @@ interface Erc20Interface extends Interface {
   };
 
   events: {
+    /**
+     * Emitted when the allowance of a 'spender' for an 'owner' is changed by a call to approve() or increase/decreaseAllowance().
+     */
     Approval: TypedEventDescription<{
       encodeTopics([owner, spender, value]: [
         string | null,
@@ -62,6 +101,9 @@ interface Erc20Interface extends Interface {
       ]): string[];
     }>;
 
+    /**
+     * Emitted when 'value' tokens are moved from one account ('from') to another ('to').
+     */
     Transfer: TypedEventDescription<{
       encodeTopics([from, to, value]: [
         string | null,
@@ -72,6 +114,9 @@ interface Erc20Interface extends Interface {
   };
 }
 
+/**
+ * Main Ethers Contract class definition for the ERC20 token.
+ */
 export class Erc20 extends Contract {
   connect(signerOrProvider: Signer | Provider | string): Erc20;
   attach(addressOrName: string): Erc20;
@@ -85,43 +130,77 @@ export class Erc20 extends Contract {
 
   interface: Erc20Interface;
 
+  // --- Contract Functions (Low-level access via .functions) ---
   functions: {
+    /**
+     * Returns the amount of tokens that an owner allowed to a spender.
+     */
     allowance(owner: string, spender: string): Promise<BigNumber>;
 
+    /**
+     * Sets amount as the allowance of spender over the caller's tokens.
+     */
     approve(
       spender: string,
       amount: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    /**
+     * Returns the amount of tokens owned by the account.
+     */
     balanceOf(account: string): Promise<BigNumber>;
 
+    /**
+     * Returns the number of decimals used for display.
+     */
     decimals(): Promise<number>;
 
+    /**
+     * Decreases the allowance granted to spender by the caller.
+     */
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    /**
+     * Increases the allowance granted to spender by the caller.
+     */
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    /**
+     * Returns the name of the token.
+     */
     name(): Promise<string>;
 
+    /**
+     * Returns the symbol of the token.
+     */
     symbol(): Promise<string>;
 
+    /**
+     * Returns the total supply of tokens.
+     */
     totalSupply(): Promise<BigNumber>;
 
+    /**
+     * Moves tokens from the caller's account to a recipient.
+     */
     transfer(
       recipient: string,
       amount: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    /**
+     * Moves tokens from one address to another using the allowance mechanism.
+     */
     transferFrom(
       sender: string,
       recipient: string,
@@ -130,6 +209,7 @@ export class Erc20 extends Contract {
     ): Promise<ContractTransaction>;
   };
 
+  // --- Contract Functions (Direct access on the Erc20 instance) ---
   allowance(owner: string, spender: string): Promise<BigNumber>;
 
   approve(
@@ -173,43 +253,84 @@ export class Erc20 extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  // --- Event Filters ---
   filters: {
+    /**
+     * Filter for the Approval event.
+     */
     Approval(
       owner: string | null,
       spender: string | null,
       value: null
     ): EventFilter;
 
+    /**
+     * Filter for the Transfer event.
+     */
     Transfer(from: string | null, to: string | null, value: null): EventFilter;
   };
 
+  // --- Gas Estimation Functions (.estimate) ---
   estimate: {
+    /**
+     * Estimates gas for the allowance call.
+     */
     allowance(owner: string, spender: string): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the approve transaction.
+     */
     approve(spender: string, amount: BigNumberish): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the balanceOf call.
+     */
     balanceOf(account: string): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the decimals call.
+     */
     decimals(): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the decreaseAllowance transaction.
+     */
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish
     ): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the increaseAllowance transaction.
+     */
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish
     ): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the name call.
+     */
     name(): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the symbol call.
+     */
     symbol(): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the totalSupply call.
+     */
     totalSupply(): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the transfer transaction.
+     */
     transfer(recipient: string, amount: BigNumberish): Promise<BigNumber>;
 
+    /**
+     * Estimates gas for the transferFrom transaction.
+     */
     transferFrom(
       sender: string,
       recipient: string,
